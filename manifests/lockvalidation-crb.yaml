@@ -1,0 +1,15 @@
+
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: lockvalidation-crb 
+  labels:
+    app: lockvalidation 
+subjects:
+- kind: ServiceAccount
+  name: lockvalidation-sa
+  namespace: default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: lockvalidation-cr

@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: lockvalidation-dpl 
+  labels:
+    app: lockvalidation 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: lockvalidation 
+  template:
+    metadata:
+      labels:
+        app: lockvalidation 
+    spec:
+      serviceAccountName: lockvalidation-sa
+      containers:
+        - name: lockvalidation 
+          image: pkotas/lockvalidation:v1
+          imagePullPolicy: IfNotPresent
+          resources:
+            requests:
+              memory: "128Mi"
+              cpu: "250m"
+            limits:
+              memory: "256Mi"
+              cpu: "500m"
+          volumeMounts:
+            - name: webhook-certs
+              mountPath: /etc/lockvalidation/cert
+              readOnly: true
+      volumes:
+        - name: webhook-certs
+          secret:
+            secretName: lockvalidation-crt
