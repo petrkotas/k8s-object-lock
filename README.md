@@ -283,3 +283,16 @@ rules:
 ```
 
 The cluster role has to be bounded to service account via cluster role binding.
+
+## Further work
+
+### Add support for lock configuration stored in the CRD
+
+To enable even more refined locks, there has to be some sort of configuration.
+The configuration should be optinal and configurable for each object lock,
+as each lock can have diferent properties.
+
+Possible solution to this, is store the configuration directly in the CRD.
+This would require registering validation controller for all operations and
+possibly for all Kinds. Filtering will be done in the controller via lock
+configuration.
