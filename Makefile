@@ -1,6 +1,6 @@
 CGO_ENABLED := 0 
 GOOS := linux 
-GOPATH := /home/pkotas/Work/go/
+GOPATH := /home/pkotas/Projects/Work/go/
 
 deploy: 
 	kubectl apply -f ./manifests/lockvalidation-sa.yaml
