@@ -14,8 +14,10 @@ webhooks:
       caBundle: {{ CA_BUNDLE }}
     rules:
       - operations: 
+          - CREATE
           - UPDATE
           - DELETE
+          - CONNECT
         apiGroups:
           - ""
         apiVersions: 
