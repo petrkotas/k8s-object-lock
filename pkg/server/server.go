@@ -4,8 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
-	"k8s.io/klog"
 	"net/http"
+
+	"k8s.io/klog"
 
 	"k8s.io/api/admission/v1beta1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -66,6 +67,8 @@ func (s *Conf) checkLock(admissionReview *v1beta1.AdmissionReview) *v1beta1.Admi
 
 	// directly ask the API. The calls should be so sparse, there is no reason in using cached listers.
 	klog.Infof("Looking for PodLock: %s - %s/%s", kind, namespace, name)
+	klog.Infof("Admission request: %s, %s, %s", admissionReview.Request.Resource, admissionReview.Request.SubResource, admissionReview.Request.Operation)
+
 	lock, err := s.Client.LocksV1().Locks(namespace).Get(name, metav1.GetOptions{})
 	if err != nil {
 		klog.Errorf("Error occured when looking for podlock: %v", err)
@@ -77,7 +80,7 @@ func (s *Conf) checkLock(admissionReview *v1beta1.AdmissionReview) *v1beta1.Admi
 		klog.Infof("Found pod lock object: %s/%s", lock.Namespace, lock.Name)
 		response.Allowed = false
 		response.Result = &metav1.Status{
-			Message: fmt.Sprintf("Pod %s/%s is locked", lock.Namespace, lock.Name),
+			Message: fmt.Sprintf("Pod %s/%s is locked, reason: %s", lock.Namespace, lock.Name, lock.Spec.Reason),
 		}
 	}
 
