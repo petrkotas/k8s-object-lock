@@ -88,6 +88,18 @@ func (c *FakeLocks) Update(lock *lockv1.Lock) (result *lockv1.Lock, err error) {
 	return obj.(*lockv1.Lock), err
 }
 
+// UpdateStatus was generated because the type contains a Status member.
+// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
+func (c *FakeLocks) UpdateStatus(lock *lockv1.Lock) (*lockv1.Lock, error) {
+	obj, err := c.Fake.
+		Invokes(testing.NewUpdateSubresourceAction(locksResource, "status", c.ns, lock), &lockv1.Lock{})
+
+	if obj == nil {
+		return nil, err
+	}
+	return obj.(*lockv1.Lock), err
+}
+
 // Delete takes name of the lock and deletes it. Returns an error if one occurs.
 func (c *FakeLocks) Delete(name string, options *v1.DeleteOptions) error {
 	_, err := c.Fake.

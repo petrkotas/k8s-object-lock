@@ -25,6 +25,7 @@ type LocksGetter interface {
 type LockInterface interface {
 	Create(*v1.Lock) (*v1.Lock, error)
 	Update(*v1.Lock) (*v1.Lock, error)
+	UpdateStatus(*v1.Lock) (*v1.Lock, error)
 	Delete(name string, options *metav1.DeleteOptions) error
 	DeleteCollection(options *metav1.DeleteOptions, listOptions metav1.ListOptions) error
 	Get(name string, options metav1.GetOptions) (*v1.Lock, error)
@@ -102,6 +103,22 @@ func (c *locks) Update(lock *v1.Lock) (result *v1.Lock, err error) {
 		Namespace(c.ns).
 		Resource("locks").
 		Name(lock.Name).
+		Body(lock).
+		Do().
+		Into(result)
+	return
+}
+
+// UpdateStatus was generated because the type contains a Status member.
+// Add a +genclient:noStatus comment above the type to avoid generating UpdateStatus().
+
+func (c *locks) UpdateStatus(lock *v1.Lock) (result *v1.Lock, err error) {
+	result = &v1.Lock{}
+	err = c.client.Put().
+		Namespace(c.ns).
+		Resource("locks").
+		Name(lock.Name).
+		SubResource("status").
 		Body(lock).
 		Do().
 		Into(result)
