@@ -17,7 +17,7 @@ spec:
       serviceAccountName: lockvalidation-sa
       containers:
         - name: lockvalidation 
-          image: pkotas/lockvalidation:v1
+          image: pkotas/lockvalidation:latest
           imagePullPolicy: IfNotPresent
           resources:
             requests:
