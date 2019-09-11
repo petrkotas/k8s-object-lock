@@ -13,7 +13,7 @@ deploy:
 	kubectl label namespace default lockable=true
 
 build-docker: 
-	 docker build -t pkotas/lockvalidation:v1 . 
+	 docker build -t pkotas/lockvalidation . 
 
 codegen:
 	/usr/bin/env bash ./hack/update-codegen.sh
