@@ -59,28 +59,28 @@ func (s *Conf) checkLock(admissionReview *v1beta1.AdmissionReview) *v1beta1.Admi
 
 	klog.Info("Processing the request")
 
-	// check if there is podLock object in the same namespace with the same name
+	// check if there is lock object in the same namespace with the same name
 	// If so, than fail
 	kind := admissionReview.Request.Kind.String()
 	name := admissionReview.Request.Name
 	namespace := admissionReview.Request.Namespace
 
 	// directly ask the API. The calls should be so sparse, there is no reason in using cached listers.
-	klog.Infof("Looking for PodLock: %s - %s/%s", kind, namespace, name)
+	klog.Infof("Looking for a lock: %s - %s/%s", kind, namespace, name)
 	klog.Infof("Admission request: %s, %s, %s", admissionReview.Request.Resource, admissionReview.Request.SubResource, admissionReview.Request.Operation)
 
 	lock, err := s.Client.LocksV1().Locks(namespace).Get(name, metav1.GetOptions{})
 	if err != nil {
-		klog.Errorf("Error occured when looking for podlock: %v", err)
+		klog.Infof("Lock: %v not found.", err)
 		return &response
 	}
 
-	// only when podlock is returned it marks the pod for lockdown
+	// only when lock is returned it marks the object for lockdown
 	if lock != nil {
-		klog.Infof("Found pod lock object: %s/%s", lock.Namespace, lock.Name)
+		klog.Infof("Found lock object: %s/%s", lock.Namespace, lock.Name)
 		response.Allowed = false
 		response.Result = &metav1.Status{
-			Message: fmt.Sprintf("Pod %s/%s is locked, reason: %s", lock.Namespace, lock.Name, lock.Spec.Reason),
+			Message: fmt.Sprintf("Object %s/%s is locked, reason: %s", lock.Namespace, lock.Name, lock.Spec.Reason),
 		}
 	}
 
