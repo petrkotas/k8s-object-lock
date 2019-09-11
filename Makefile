@@ -1,6 +1,5 @@
 CGO_ENABLED := 0 
 GOOS := linux 
-GOPATH := /home/pkotas/Projects/Work/go/
 
 deploy: 
 	kubectl apply -f ./manifests/lockvalidation-sa.yaml
@@ -19,7 +18,7 @@ codegen:
 	/usr/bin/env bash ./hack/update-codegen.sh
 
 build: cmd/main.go 
-	GOPATH=$(GOPATH) CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) go build -a -installsuffix cgo -o lockvalidation -v $^
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) go build -a -installsuffix cgo -o lockvalidation -v $^
 
 gen-cert:
 	/usr/bin/env bash ./hack/gen_certs.sh 
