@@ -23,7 +23,7 @@ var (
 	deserializer  = codecs.UniversalDeserializer()
 )
 
-// ServerConf caries client configuration
+// Conf caries client configuration
 type Conf struct {
 	Client *clientset.Clientset
 }
