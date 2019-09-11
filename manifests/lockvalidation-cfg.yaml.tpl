@@ -19,10 +19,11 @@ webhooks:
           - DELETE
           - CONNECT
         apiGroups:
-          - ""
+          - "*"
         apiVersions: 
           - v1
         resources: 
+          - "deployments"
           - "pods"
     namespaceSelector:
       matchLabels:
