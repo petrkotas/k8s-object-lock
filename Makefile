@@ -11,6 +11,16 @@ deploy:
 	kubectl apply -f ./manifests/lockvalidation-cfg.yaml
 	kubectl label namespace default lockable=true
 
+undeploy:
+	kubectl delete -f ./manifests/lockvalidation-sa.yaml
+	kubectl delete -f ./manifests/lockvalidation-cr.yaml
+	kubectl delete -f ./manifests/lockvalidation-crb.yaml
+	kubectl delete -f ./manifests/pod_lock-crd.yaml
+	kubectl delete -f ./manifests/lockvalidation-dpl.yaml
+	kubectl delete -f ./manifests/lockvalidation-svc.yaml
+	kubectl delete -f ./manifests/lockvalidation-cfg.yaml
+	kubectl label namespace default lockable-
+
 build-docker: 
 	 docker build -t pkotas/lockvalidation . 
 
@@ -31,4 +41,4 @@ clean-manifest:
 clean-bin:
 	rm ./lockvalidation
 
-.PHONY: deploy clean clean-manifest clean-bin gen-certs codegen
+.PHONY: deploy clean clean-manifest clean-bin gen-certs codegen undeploy
