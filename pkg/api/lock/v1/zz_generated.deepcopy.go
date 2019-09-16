@@ -44,7 +44,7 @@ func (in *Lock) DeepCopyObject() runtime.Object {
 func (in *LockList) DeepCopyInto(out *LockList) {
 	*out = *in
 	out.TypeMeta = in.TypeMeta
-	out.ListMeta = in.ListMeta
+	in.ListMeta.DeepCopyInto(&out.ListMeta)
 	if in.Items != nil {
 		in, out := &in.Items, &out.Items
 		*out = make([]Lock, len(*in))

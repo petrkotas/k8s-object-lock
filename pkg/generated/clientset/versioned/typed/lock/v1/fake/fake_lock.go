@@ -50,7 +50,7 @@ func (c *FakeLocks) List(opts v1.ListOptions) (result *lockv1.LockList, err erro
 	if label == nil {
 		label = labels.Everything()
 	}
-	list := &lockv1.LockList{}
+	list := &lockv1.LockList{ListMeta: obj.(*lockv1.LockList).ListMeta}
 	for _, item := range obj.(*lockv1.LockList).Items {
 		if label.Matches(labels.Set(item.Labels)) {
 			list.Items = append(list.Items, item)
@@ -119,7 +119,7 @@ func (c *FakeLocks) DeleteCollection(options *v1.DeleteOptions, listOptions v1.L
 // Patch applies the patch and returns the patched lock.
 func (c *FakeLocks) Patch(name string, pt types.PatchType, data []byte, subresources ...string) (result *lockv1.Lock, err error) {
 	obj, err := c.Fake.
-		Invokes(testing.NewPatchSubresourceAction(locksResource, c.ns, name, data, subresources...), &lockv1.Lock{})
+		Invokes(testing.NewPatchSubresourceAction(locksResource, c.ns, name, pt, data, subresources...), &lockv1.Lock{})
 
 	if obj == nil {
 		return nil, err
