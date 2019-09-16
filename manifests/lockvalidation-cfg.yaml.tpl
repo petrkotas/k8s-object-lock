@@ -23,8 +23,8 @@ webhooks:
         apiVersions: 
           - v1
         resources: 
-          - "deployments"
-          - "pods"
+          - "deployments/*"
+          - "pods/*"
     namespaceSelector:
       matchLabels:
         lockable: "true"
