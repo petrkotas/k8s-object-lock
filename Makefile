@@ -20,6 +20,7 @@ undeploy:
 	kubectl delete -f ./manifests/lockvalidation-svc.yaml
 	kubectl delete -f ./manifests/lockvalidation-cfg.yaml
 	kubectl label namespace default lockable-
+	kubectl delete secret lockvalidation-crt
 
 build-docker: 
 	 docker build -t pkotas/lockvalidation . 
@@ -36,9 +37,9 @@ gen-cert:
 clean: clean-manifest clean-bin
 
 clean-manifest:
-	rm ./manifests/lockvalidation-svc.yaml
+	rm ./manifests/lockvalidation-cfg.yaml
 
 clean-bin:
 	rm ./lockvalidation
 
-.PHONY: deploy clean clean-manifest clean-bin gen-certs codegen undeploy
+.PHONY: deploy clean clean-manifest clean-bin gen-certs codegen undeploy deploy-local undeploy-local
