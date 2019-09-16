@@ -4,11 +4,12 @@ import (
 	"crypto/tls"
 	"flag"
 	"fmt"
-	"k8s.io/klog"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
+
+	"k8s.io/klog"
 
 	"github.com/petrkotas/k8s-object-lock/pkg/server"
 )
@@ -66,8 +67,9 @@ func main() {
 }
 
 func init() {
+	klog.InitFlags(nil)
+
 	klog.Info("Started validating server")
-	flag.Set("v", "9")
 
 	// parse config
 	flag.StringVar(&kubeconfig, "kubeconfig", "", "Path to a kubeconfig. Only required if out-of-cluster.")
