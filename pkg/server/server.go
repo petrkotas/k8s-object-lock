@@ -68,6 +68,7 @@ func (s *Conf) checkLock(admissionReview *v1beta1.AdmissionReview) *v1beta1.Admi
 	// directly ask the API. The calls should be so sparse, there is no reason in using cached listers.
 	klog.Infof("Looking for a lock: %s - %s/%s", kind, namespace, name)
 	klog.Infof("Admission request: %s, %s, %s", admissionReview.Request.Resource, admissionReview.Request.SubResource, admissionReview.Request.Operation)
+	klog.Infof("Admission request resource: %s, %s, %s", admissionReview.Request.RequestResource, admissionReview.Request.RequestSubResource)
 
 	lock, err := s.Client.LocksV1().Locks(namespace).Get(name, metav1.GetOptions{})
 	if err != nil {
