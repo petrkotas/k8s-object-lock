@@ -7,4 +7,4 @@ WORKDIR /usr/app
 
 ADD ./lockvalidation /usr/app/lockvalidation 
 
-CMD ["./lockvalidation", "--tlsCertFile", "/etc/lockvalidation/cert/cert.pem", "--tlsKeyFile", "/etc/lockvalidation/cert/key.pem"]
+CMD ["./lockvalidation", "--tlsCertFile", "/etc/lockvalidation/cert/cert.pem", "--tlsKeyFile", "/etc/lockvalidation/cert/key.pem", "-v", "9"]
