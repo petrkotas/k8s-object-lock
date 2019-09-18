@@ -86,8 +86,8 @@ func (in *LockSpec) DeepCopyInto(out *LockSpec) {
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
-	if in.APIVersion != nil {
-		in, out := &in.APIVersion, &out.APIVersion
+	if in.APIVersions != nil {
+		in, out := &in.APIVersions, &out.APIVersions
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}

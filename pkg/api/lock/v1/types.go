@@ -51,7 +51,7 @@ type LockSpec struct {
 
 	// APIVersions is the API versions the resources belong to. '*' is all versions.
 	// If '*' is present, the length of the slice must be one.
-	APIVersion []string `json:apiVersions,omitempty`
+	APIVersions []string `json:apiVersions,omitempty`
 
 	// Operations which are permitted on the object, when empty blocks all CRUD
 	Operations []string `json:"operations,omitempty"`
