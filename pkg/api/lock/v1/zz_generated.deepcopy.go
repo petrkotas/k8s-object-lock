@@ -81,6 +81,11 @@ func (in *LockSpec) DeepCopyInto(out *LockSpec) {
 		*out = make([]string, len(*in))
 		copy(*out, *in)
 	}
+	if in.SubResources != nil {
+		in, out := &in.SubResources, &out.SubResources
+		*out = make([]string, len(*in))
+		copy(*out, *in)
+	}
 	if in.APIGroups != nil {
 		in, out := &in.APIGroups, &out.APIGroups
 		*out = make([]string, len(*in))

@@ -45,15 +45,19 @@ type LockSpec struct {
 	// Depending on the enclosing object, subresources might not be allowed.
 	Resources []string `json:"resources,omitempty"`
 
+	// Subresources to apply the lock to
+	SubResources []string `json:"subResources,omitempty"`
+
 	// APIGroups is the API groups the resources belong to. '*' is all groups.
 	// If '*' is present, the length of the slice must be one.
 	APIGroups []string `json:"apiGroups,omitempty"`
 
 	// APIVersions is the API versions the resources belong to. '*' is all versions.
 	// If '*' is present, the length of the slice must be one.
-	APIVersions []string `json:apiVersions,omitempty`
+	APIVersions []string `json:"apiVersions,omitempty"`
 
 	// Operations which are permitted on the object, when empty blocks all CRUD
+	// Valid operations are: CREATE, UPDATE, DELETE, CONNECT
 	Operations []string `json:"operations,omitempty"`
 
 	// The message that will be returnes as a reason for locking the object
@@ -65,5 +69,5 @@ type LockStatus struct {
 
 	// BlockedAttempts is the number of actions blocked by lock object
 	// Blocked actions are those that violates the rules defined by the lock object
-	BlockedAttempts int `json:blockedAttempts,omitempty`
+	BlockedAttempts int `json:"blockedAttempts,omitempty"`
 }
