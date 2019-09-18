@@ -45,6 +45,16 @@ func MakeServerConf(k8sMasterURL, kubeconfig string) *Conf {
 	}
 }
 
+func itemNotInList(item string, list []string) bool {
+	for _, i := range list {
+		if i == item {
+			return false
+		}
+	}
+
+	return true
+}
+
 // validate takes the object on admission request and checks whether the same
 // object is annotated in the etcd as locked.
 // If objects exist in etcd and is locked => request fails
@@ -72,16 +82,53 @@ func (s *Conf) checkLock(admissionReview *v1beta1.AdmissionReview) *v1beta1.Admi
 
 	lock, err := s.Client.LocksV1().Locks(namespace).Get(name, metav1.GetOptions{})
 	if err != nil {
-		klog.Infof("Lock: %v not found.", err)
+		klog.Infof("Lock: %s/%s not found, object is not locked.", namespace, name)
 		return &response
 	}
 
 	// only when lock is returned it marks the object for lockdown
 	if lock != nil {
 		klog.Infof("Found lock object: %s/%s", lock.Namespace, lock.Name)
-		response.Allowed = false
-		response.Result = &metav1.Status{
-			Message: fmt.Sprintf("Object %s/%s is locked, reason: %s", lock.Namespace, lock.Name, lock.Spec.Reason),
+
+		// check the rules whether the object is indeed locked on the operation
+
+		locked := true
+
+		if lock.Spec.Operations != nil {
+			if itemNotInList(string(admissionReview.Request.Operation), lock.Spec.Operations) {
+				locked = false
+			}
+		}
+
+		if lock.Spec.APIGroups != nil {
+			if itemNotInList(admissionReview.Request.Resource.Group, lock.Spec.APIGroups) {
+				locked = false
+			}
+		}
+
+		if lock.Spec.APIVersions != nil {
+			if itemNotInList(admissionReview.Request.Resource.Version, lock.Spec.APIVersions) {
+				locked = false
+			}
+		}
+
+		if lock.Spec.Resources != nil {
+			if itemNotInList(admissionReview.Request.Resource.Resource, lock.Spec.Resources) {
+				locked = false
+			}
+		}
+
+		if lock.Spec.SubResources != nil {
+			if itemNotInList(admissionReview.Request.SubResource, lock.Spec.SubResources) {
+				locked = false
+			}
+		}
+
+		if locked {
+			response.Allowed = false
+			response.Result = &metav1.Status{
+				Message: fmt.Sprintf("Object %s/%s is locked, reason: %s", lock.Namespace, lock.Name, lock.Spec.Reason),
+			}
 		}
 	}
 
