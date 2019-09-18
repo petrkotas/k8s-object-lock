@@ -14,6 +14,7 @@ import (
 	"k8s.io/apimachinery/pkg/runtime/serializer"
 	"k8s.io/client-go/tools/clientcmd"
 
+	v1 "github.com/petrkotas/k8s-object-lock/pkg/api/lock/v1"
 	clientset "github.com/petrkotas/k8s-object-lock/pkg/generated/clientset/versioned"
 )
 
@@ -59,7 +60,7 @@ func itemNotInList(item string, list []string) bool {
 // object is annotated in the etcd as locked.
 // If objects exist in etcd and is locked => request fails
 // otherwise request passes
-func (s *Conf) checkLock(admissionReview *v1beta1.AdmissionReview) *v1beta1.AdmissionResponse {
+func checkLock(lock *v1.Lock, admissionReview *v1beta1.AdmissionReview) bool {
 	var result *metav1.Status
 	allowed := true
 	response := v1beta1.AdmissionResponse{
@@ -79,12 +80,6 @@ func (s *Conf) checkLock(admissionReview *v1beta1.AdmissionReview) *v1beta1.Admi
 	klog.Infof("Looking for a lock: %s - %s/%s", kind, namespace, name)
 	klog.Infof("Admission request: %s, %s, %s", admissionReview.Request.Resource, admissionReview.Request.SubResource, admissionReview.Request.Operation)
 	klog.Infof("Admission request resource: %s, %s, %s", admissionReview.Request.RequestResource, admissionReview.Request.RequestSubResource)
-
-	lock, err := s.Client.LocksV1().Locks(namespace).Get(name, metav1.GetOptions{})
-	if err != nil {
-		klog.Infof("Lock: %s/%s not found, object is not locked.", namespace, name)
-		return &response
-	}
 
 	// only when lock is returned it marks the object for lockdown
 	if lock != nil {
@@ -125,6 +120,8 @@ func (s *Conf) checkLock(admissionReview *v1beta1.AdmissionReview) *v1beta1.Admi
 		}
 
 		if locked {
+			return true
+
 			response.Allowed = false
 			response.Result = &metav1.Status{
 				Message: fmt.Sprintf("Object %s/%s is locked, reason: %s", lock.Namespace, lock.Name, lock.Spec.Reason),
@@ -132,7 +129,7 @@ func (s *Conf) checkLock(admissionReview *v1beta1.AdmissionReview) *v1beta1.Admi
 		}
 	}
 
-	return &response
+	return false
 }
 
 // Validate process the request, parse the data from it and pass to check
@@ -169,7 +166,14 @@ func (s *Conf) Validate(w http.ResponseWriter, r *http.Request) {
 			},
 		}
 	} else {
-		admissionResponse = s.checkLock(&ar)
+
+		lock, err := s.Client.LocksV1().Locks(namespace).Get(name, metav1.GetOptions{})
+		if err != nil {
+			klog.Infof("Lock: %s/%s not found, object is not locked.", namespace, name)
+			return &response
+		}
+
+		admissionResponse = s.checkLock(lock, &ar)
 	}
 
 	admissionReview := v1beta1.AdmissionReview{}
