@@ -5,6 +5,8 @@ go 1.13
 require (
 	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
 	github.com/imdario/mergo v0.3.7 // indirect
+	github.com/onsi/ginkgo v1.6.0
+	github.com/onsi/gomega v0.0.0-20190113212917-5533ce8a0da3
 	golang.org/x/crypto v0.0.0-20190911031432-227b76d455e7 // indirect
 	golang.org/x/oauth2 v0.0.0-20190604053449-0f29369cfe45 // indirect
 	golang.org/x/time v0.0.0-20190308202827-9d24e82272b4 // indirect
