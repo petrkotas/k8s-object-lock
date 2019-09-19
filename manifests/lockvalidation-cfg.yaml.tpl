@@ -21,10 +21,9 @@ webhooks:
         apiGroups:
           - "*"
         apiVersions: 
-          - v1
+          - "*"
         resources: 
           - "deployments/*"
-          - "pods/*"
     namespaceSelector:
       matchLabels:
         lockable: "true"
