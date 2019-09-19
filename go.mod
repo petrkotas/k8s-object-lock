@@ -3,7 +3,7 @@ module github.com/petrkotas/k8s-object-lock
 go 1.13
 
 require (
-	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b
+	github.com/golang/glog v0.0.0-20160126235308-23def4e6c14b // indirect
 	github.com/imdario/mergo v0.3.7 // indirect
 	github.com/onsi/ginkgo v1.6.0
 	github.com/onsi/gomega v0.0.0-20190113212917-5533ce8a0da3

@@ -9,6 +9,7 @@ import (
 	"k8s.io/klog"
 
 	"k8s.io/api/admission/v1beta1"
+	"k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/serializer"
@@ -61,29 +62,11 @@ func itemNotInList(item string, list []string) bool {
 // If objects exist in etcd and is locked => request fails
 // otherwise request passes
 func checkLock(lock *v1.Lock, admissionReview *v1beta1.AdmissionReview) bool {
-	var result *metav1.Status
-	allowed := true
-	response := v1beta1.AdmissionResponse{
-		Allowed: allowed,
-		Result:  result,
-	}
-
 	klog.Info("Processing the request")
-
-	// check if there is lock object in the same namespace with the same name
-	// If so, than fail
-	kind := admissionReview.Request.Kind.String()
-	name := admissionReview.Request.Name
-	namespace := admissionReview.Request.Namespace
-
-	// directly ask the API. The calls should be so sparse, there is no reason in using cached listers.
-	klog.Infof("Looking for a lock: %s - %s/%s", kind, namespace, name)
-	klog.Infof("Admission request: %s, %s, %s", admissionReview.Request.Resource, admissionReview.Request.SubResource, admissionReview.Request.Operation)
-	klog.Infof("Admission request resource: %s, %s, %s", admissionReview.Request.RequestResource, admissionReview.Request.RequestSubResource)
 
 	// only when lock is returned it marks the object for lockdown
 	if lock != nil {
-		klog.Infof("Found lock object: %s/%s", lock.Namespace, lock.Name)
+		klog.Infof("Lock received: %s/%s", lock.Namespace, lock.Name)
 
 		// check the rules whether the object is indeed locked on the operation
 
@@ -91,41 +74,41 @@ func checkLock(lock *v1.Lock, admissionReview *v1beta1.AdmissionReview) bool {
 
 		if lock.Spec.Operations != nil {
 			if itemNotInList(string(admissionReview.Request.Operation), lock.Spec.Operations) {
+				klog.Infof("Operation %s not found in locked operations", string(admissionReview.Request.Operation))
 				locked = false
 			}
 		}
 
 		if lock.Spec.APIGroups != nil {
 			if itemNotInList(admissionReview.Request.Resource.Group, lock.Spec.APIGroups) {
+				klog.Infof("APIGroup %s not found in locked operations", string(admissionReview.Request.Resource.Group))
 				locked = false
 			}
 		}
 
 		if lock.Spec.APIVersions != nil {
 			if itemNotInList(admissionReview.Request.Resource.Version, lock.Spec.APIVersions) {
+				klog.Infof("APIVersion %s not found in locked operations", string(admissionReview.Request.Resource.Version))
 				locked = false
 			}
 		}
 
 		if lock.Spec.Resources != nil {
 			if itemNotInList(admissionReview.Request.Resource.Resource, lock.Spec.Resources) {
+				klog.Infof("Resource %s not found in locked operations", string(admissionReview.Request.Resource.Resource))
 				locked = false
 			}
 		}
 
 		if lock.Spec.SubResources != nil {
 			if itemNotInList(admissionReview.Request.SubResource, lock.Spec.SubResources) {
+				klog.Infof("SubResource %s not found in locked operations", string(admissionReview.Request.SubResource))
 				locked = false
 			}
 		}
 
 		if locked {
 			return true
-
-			response.Allowed = false
-			response.Result = &metav1.Status{
-				Message: fmt.Sprintf("Object %s/%s is locked, reason: %s", lock.Namespace, lock.Name, lock.Spec.Reason),
-			}
 		}
 	}
 
@@ -166,14 +149,39 @@ func (s *Conf) Validate(w http.ResponseWriter, r *http.Request) {
 			},
 		}
 	} else {
-
-		lock, err := s.Client.LocksV1().Locks(namespace).Get(name, metav1.GetOptions{})
-		if err != nil {
-			klog.Infof("Lock: %s/%s not found, object is not locked.", namespace, name)
-			return &response
+		var result *metav1.Status
+		allowed := true
+		admissionResponse = &v1beta1.AdmissionResponse{
+			Allowed: allowed,
+			Result:  result,
 		}
 
-		admissionResponse = s.checkLock(lock, &ar)
+		// check if there is lock object in the same namespace with the same name
+		// If so, than fail
+		kind := ar.Request.Kind.String()
+		name := ar.Request.Name
+		namespace := ar.Request.Namespace
+
+		// directly ask the API. The calls should be so sparse, there is no reason in using cached listers.
+		klog.Infof("Looking for a lock: %s - %s/%s", kind, namespace, name)
+		klog.Infof("Admission request: %s, %s, %s", ar.Request.Resource, ar.Request.SubResource, ar.Request.Operation)
+
+		var lock *v1.Lock
+		lock, err = s.Client.LocksV1().Locks(ar.Request.Namespace).Get(ar.Request.Name, metav1.GetOptions{})
+		if errors.IsNotFound(err) {
+			klog.Infof("Lock: %s/%s not found", ar.Request.Namespace, ar.Request.Name)
+			lock = nil
+		} else if err != nil {
+			klog.Errorf("An error occured, the admission review will not be done: %s", err.Error())
+			lock = nil
+		}
+
+		if checkLock(lock, &ar) {
+			admissionResponse.Allowed = false
+			admissionResponse.Result = &metav1.Status{
+				Message: fmt.Sprintf("Object %s/%s is locked, reason: %s", lock.Namespace, lock.Name, lock.Spec.Reason),
+			}
+		}
 	}
 
 	admissionReview := v1beta1.AdmissionReview{}
