@@ -1,7 +1,11 @@
-CGO_ENABLED := 0 
-GOOS := linux 
+CGO_ENABLED := 0
+GOOS := linux
 
-deploy: 
+deploy-cluster:
+	kind create cluster
+
+deploy-to-cluster:
+	kind load docker-image pkotas/lockvalidation:devel
 	kubectl apply -f ./manifests/lockvalidation-sa.yaml
 	kubectl apply -f ./manifests/lockvalidation-cr.yaml
 	kubectl apply -f ./manifests/lockvalidation-crb.yaml
@@ -22,17 +26,17 @@ undeploy:
 	kubectl label namespace default lockable-
 	kubectl delete secret lockvalidation-crt
 
-build-docker: 
-	 docker build -t pkotas/lockvalidation . 
+build-docker:
+	 docker build -t pkotas/lockvalidation:devel .
 
 codegen:
 	/usr/bin/env bash ./hack/update-codegen.sh
 
-build: cmd/main.go 
+build: cmd/main.go
 	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) go build -a -installsuffix cgo -o lockvalidation -v $^
 
 gen-cert:
-	/usr/bin/env bash ./hack/gen_certs.sh 
+	/usr/bin/env bash ./hack/gen_certs.sh
 
 clean: clean-manifest clean-bin
 
@@ -42,4 +46,4 @@ clean-manifest:
 clean-bin:
 	rm ./lockvalidation
 
-.PHONY: deploy clean clean-manifest clean-bin gen-certs codegen undeploy deploy-local undeploy-local
+.PHONY: deploy-cluster deploy-to-cluster clean clean-manifest clean-bin gen-certs codegen undeploy deploy-local undeploy-local

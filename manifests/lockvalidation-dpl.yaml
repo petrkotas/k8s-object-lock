@@ -1,23 +1,23 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: lockvalidation-dpl 
+  name: lockvalidation-dpl
   labels:
-    app: lockvalidation 
+    app: lockvalidation
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: lockvalidation 
+      app: lockvalidation
   template:
     metadata:
       labels:
-        app: lockvalidation 
+        app: lockvalidation
     spec:
       serviceAccountName: lockvalidation-sa
       containers:
-        - name: lockvalidation 
-          image: pkotas/lockvalidation:latest
+        - name: lockvalidation
+          image: pkotas/lockvalidation:devel
           imagePullPolicy: IfNotPresent
           resources:
             requests:
