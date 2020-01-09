@@ -2,11 +2,12 @@ apiVersion: v1
 kind: Service
 metadata:
   name: lockvalidation-svc
+  namespace: kube-lock
   labels:
-    app: lockvalidation 
+    app: lockvalidation
 spec:
   ports:
   - port: 443
     targetPort: 443
   selector:
-    app: lockvalidation 
+    app: lockvalidation

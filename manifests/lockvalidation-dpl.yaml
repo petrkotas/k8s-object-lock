@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: lockvalidation-dpl
+  namespace: kube-lock
   labels:
     app: lockvalidation
 spec:

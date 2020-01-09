@@ -132,4 +132,5 @@ kubectl create secret generic ${secret} \
 
 # setup the server cert for validating webhook
 export CA_BUNDLE=$(cat ${tmpdir}/server-cert.pem | base64 -w0)
-sed "s/{{ CA_BUNDLE }}/${CA_BUNDLE}/" ./manifests/lockvalidation-cfg.yaml.tpl > ./manifests/lockvalidation-cfg.yaml
+sed "s/{{ CA_BUNDLE }}/${CA_BUNDLE}/" ./manifests/lockvalidation-cfg_dpl.yaml.tpl > ./manifests/lockvalidation-cfg_dpl.yaml
+sed "s/{{ CA_BUNDLE }}/${CA_BUNDLE}/" ./manifests/lockvalidation-cfg_all.yaml.tpl > ./manifests/lockvalidation-cfg_all.yaml

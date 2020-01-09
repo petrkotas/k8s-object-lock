@@ -1,29 +1,30 @@
 apiVersion: admissionregistration.k8s.io/v1beta1
 kind: ValidatingWebhookConfiguration
 metadata:
-  name: lockvalidation-cfg 
+  name: lockvalidation-cfg
   labels:
-    app: lockvalidation 
+    app: lockvalidation
 webhooks:
-  - name: lockvalidation.kotas.tech 
+  - name: lockvalidation.kotas.tech
     clientConfig:
       service:
         name: lockvalidation-svc
-        namespace: default
+        namespace: kube-lock
         path: "/validate"
       caBundle: {{ CA_BUNDLE }}
     rules:
-      - operations: 
+      - operations:
           - CREATE
           - UPDATE
           - DELETE
           - CONNECT
         apiGroups:
           - "*"
-        apiVersions: 
+        apiVersions:
           - "*"
-        resources: 
+        resources:
           - "deployments/*"
+        scope: "Namespaced"
     namespaceSelector:
       matchLabels:
         lockable: "true"
