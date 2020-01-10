@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.com/petrkotas/k8s-object-lock.svg?branch=master)](https://travis-ci.com/petrkotas/k8s-object-lock)
+
 # Kubernetes object lock
 
 [![asciicast](https://asciinema.org/a/gcXZb7x0taJuxyEkLzXmdykfn.svg)](https://asciinema.org/a/gcXZb7x0taJuxyEkLzXmdykfn)
