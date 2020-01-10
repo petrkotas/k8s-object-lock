@@ -22,12 +22,10 @@ jobs:
 
         # Create a new Kubernetes cluster using KinD
         - kind create cluster
-
-        # Set KUBECONFIG environment variable
-        - export KUBECONFIG="$(kind get kubeconfig-path)"
       script:
+        - make deploy-base
+        - kubectl get namespaces
         - make build
         - make cluster-load-image
-        - make deploy-base
         - make deploy-for-dpl
         - make functest
