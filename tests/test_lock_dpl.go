@@ -70,7 +70,7 @@ var _ = Describe("with kubernetes lock", func() {
 			pods, err := kubeCli.CoreV1().Pods("default").List(metav1.ListOptions{FieldSelector: "status.phase=Running"})
 			Expect(err).ToNot(HaveOccurred(), "should list pods in default namespace")
 			return len(pods.Items)
-		}, 20*time.Second).Should(Equal(0), "no pods should be running after tests")
+		}, 60*time.Second).Should(Equal(0), "no pods should be running after tests")
 	})
 
 	AfterEach(func() {
@@ -81,7 +81,7 @@ var _ = Describe("with kubernetes lock", func() {
 			locks, err := lockClient.List(metav1.ListOptions{})
 			Expect(err).ToNot(HaveOccurred(), "should list locks in default namespace")
 			return len(locks.Items)
-		}, 10*time.Second).Should(Equal(0), "no locks should be present before tests")
+		}, 60*time.Second).Should(Equal(0), "no locks should be present before tests")
 
 		err = kubeCli.AppsV1().RESTClient().Delete().Namespace("default").Resource("deployments").Do().Error()
 		Expect(err).ToNot(HaveOccurred(), "should list deployments without problem")
@@ -89,7 +89,7 @@ var _ = Describe("with kubernetes lock", func() {
 			dpls, err := dplClient.List(metav1.ListOptions{})
 			Expect(err).ToNot(HaveOccurred(), "should list deployments in default namespace")
 			return len(dpls.Items)
-		}, 10*time.Second).Should(Equal(0), "no deployments should be running before tests")
+		}, 60*time.Second).Should(Equal(0), "no deployments should be running before tests")
 	})
 
 	Context("with lock deployed", func() {
@@ -186,7 +186,7 @@ var _ = Describe("with kubernetes lock", func() {
 				pods, err := kubeCli.CoreV1().Pods("default").List(metav1.ListOptions{FieldSelector: "status.phase=Running"})
 				Expect(err).ToNot(HaveOccurred(), "should list pods without problems")
 				return len(pods.Items)
-			}, 10*time.Second).Should(Equal(1), "deployment should be 1")
+			}, 60*time.Second).Should(Equal(1), "deployment should be 1")
 
 			scale, err := dplClient.GetScale(nginxDeploy.Name, metav1.GetOptions{})
 			Expect(err).ToNot(HaveOccurred(), "Should get scale")
@@ -199,7 +199,7 @@ var _ = Describe("with kubernetes lock", func() {
 				pods, err := kubeCli.CoreV1().Pods("default").List(metav1.ListOptions{FieldSelector: "status.phase=Running"})
 				Expect(err).ToNot(HaveOccurred(), "should list pods without problems")
 				return len(pods.Items)
-			}, 10*time.Second).Should(Equal(3), "deployment shoudl scale to 3")
+			}, 60*time.Second).Should(Equal(3), "deployment shoudl scale to 3")
 		})
 	})
 })
