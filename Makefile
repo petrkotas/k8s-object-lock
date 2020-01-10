@@ -37,6 +37,9 @@ undeploy:
 	kubectl label namespace default lockable-
 	kubectl delete secret lockvalidation-crt
 
+get-dependencies:
+	go mod download
+
 gen-cert:
 	/usr/bin/env bash ./hack/gen_certs.sh --namespace kube-lock
 
@@ -63,4 +66,4 @@ clean-bin:
 functest:
 	go test ./tests
 
-.PHONY: deploy-cluster deploy-to-cluster clean clean-manifest clean-bin gen-certs build codegen undeploy deploy-local undeploy-local
+.PHONY: deploy-cluster deploy-to-cluster clean clean-manifest clean-bin gen-certs build codegen undeploy deploy-local undeploy-local get-dependencies
