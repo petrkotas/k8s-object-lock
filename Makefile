@@ -52,7 +52,7 @@ build-code: cmd/main.go
 build-docker:
 	 docker build -t pkotas/lockvalidation:devel .
 
-build: gen-cert codegen build-code build-docker
+build: gen-cert build-code build-docker
 
 clean: clean-manifest clean-bin
 
