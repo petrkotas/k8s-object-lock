@@ -8,9 +8,6 @@ pr: none
 pool:
   vmImage: 'ubuntu-latest'
 
-parameters:
-- name: label
-
 steps: 
  - task: GoTool@0
    inputs:
