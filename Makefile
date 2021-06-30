@@ -43,7 +43,7 @@ get-dependencies:
 gen-cert:
 	/usr/bin/env bash ./hack/gen_certs.sh --namespace kube-lock
 
-codegen:
+gen-code:
 	/usr/bin/env bash ./hack/update-codegen.sh
 
 build-code: cmd/main.go
@@ -52,7 +52,7 @@ build-code: cmd/main.go
 build-docker:
 	 docker build -t pkotas/lockvalidation:devel .
 
-build: gen-cert build-code build-docker
+build: gen-code build-code build-docker
 
 clean: clean-manifest clean-bin
 
@@ -63,7 +63,10 @@ clean-manifest:
 clean-bin:
 	rm ./lockvalidation
 
-functest:
-	go test ./tests
+test-e2e:
+	go test -tag e2e ./tests
+
+test-unit:
+	go test ./...
 
 .PHONY: deploy-cluster deploy-to-cluster clean clean-manifest clean-bin gen-certs build codegen undeploy deploy-local undeploy-local get-dependencies
