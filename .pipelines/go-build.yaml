@@ -1,9 +1,10 @@
 trigger: 
   branches:
     include:
-      - refs/tags/*
-    exclude:
       - master
+      # - refs/tags/*
+    # exclude:
+      # - master
 pr: none
 
 pool:
@@ -17,6 +18,7 @@ steps:
     make get-dependencies
   displayName: Download module dependencies
 - script: |
+    env
     make build
   displayName: Compile the code using makefile
 
