@@ -22,4 +22,11 @@ steps:
     env
     make build
   displayName: Compile the code using makefile
+- task: GithubRelease@0
+  displayName: Publish release notes
+  inputs:
+    githubConnection: petrkotas
+    repositoryName: petrkotas/k8s-object-lock
+    action: create
+    addChangeLog: true
 
