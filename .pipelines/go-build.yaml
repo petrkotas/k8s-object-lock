@@ -22,11 +22,15 @@ steps:
     env
     make build
   displayName: Compile the code using makefile
+- script: |
+    MESSAGE=$(git for-each-ref refs/tags/$(Build.SourceBranch))
+    echo "$MESSAGE" > release.txt
 - task: GithubRelease@0
   displayName: Publish release notes
   inputs:
     githubConnection: k8s-object-lock
     repositoryName: petrkotas/k8s-object-lock
     action: create
+    releaseNotesFile: $(System.DefaultWorkingDirectory)/**/release.txt
     addChangeLog: true
 
