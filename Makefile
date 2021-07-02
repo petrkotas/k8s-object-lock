@@ -50,7 +50,7 @@ build-code: cmd/main.go
 	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) go build -a -installsuffix cgo -o lockvalidation -v $^
 
 build-docker:
-	 docker build -t pkotas/lockvalidation:devel .
+	 docker build -t pkotas/lockvalidation:devel -f ./container/ci.Dockerfile .
 
 build: gen-code build-code build-docker
 
