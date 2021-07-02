@@ -47,10 +47,10 @@ gen-code:
 	/usr/bin/env bash ./hack/update-codegen.sh
 
 build-code: cmd/main.go
-	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) go build -a -installsuffix cgo -o lockvalidation -v $^
+	CGO_ENABLED=$(CGO_ENABLED) GOOS=$(GOOS) go build -a -installsuffix cgo -o lockvalidation $^
 
 build-docker:
-	 docker build -t pkotas/lockvalidation:devel -f ./container/ci.Dockerfile .
+	 docker build -t pkotas/lockvalidation:devel -f ./container/app.Dockerfile .
 
 build: gen-code build-code build-docker
 
