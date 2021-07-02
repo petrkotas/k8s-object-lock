@@ -1,10 +1,10 @@
 trigger: 
   branches:
     include:
-      - master
-      # - refs/tags/*
-    # exclude:
       # - master
+      - refs/tags/*
+    exclude:
+      - *
 pr: none
 
 pool:
@@ -26,14 +26,13 @@ steps:
     set -xe
     TAG="$(git describe)"
     MESSAGE="$(git for-each-ref refs/tags/$TAG --format='%(contents)')"
-    echo $(System.DefaultWorkingDirectory)
     echo "$MESSAGE" > $(System.DefaultWorkingDirectory)/release.txt
   displayName: Extract release notes from tag annotation
 - task: GithubRelease@0
   displayName: Publish release notes
   inputs:
     githubConnection: k8s-object-lock
-    repositoryName: petrkotas/k8s-object-lock
+    repositoryName: petrkotas/k8s-object-lock-ado-release
     action: create
     releaseNotesFile: $(System.DefaultWorkingDirectory)/release.txt
     addChangeLog: true
