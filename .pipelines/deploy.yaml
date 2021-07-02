@@ -4,7 +4,7 @@ trigger:
       # - master
       - refs/tags/*
     exclude:
-      - *
+      - master
 pr: none
 
 pool:
