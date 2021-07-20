@@ -2,8 +2,23 @@ trigger:
   branches:
     include:
       - master
-pr: none
+pr:
+  - master
 
 pool:
   vmImage: 'ubuntu-latest'
 
+steps:
+- task: GoTool@0
+  inputs:
+    version: '1.13.5'
+- script: |
+    make get-dependencies
+  displayName: Download module dependencies
+- script: |
+    make gen-code
+    make build-code
+  displayName: Build project
+- script: |
+    make test-unit
+  displayName: Unit test
