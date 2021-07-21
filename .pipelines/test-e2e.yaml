@@ -1,0 +1,33 @@
+resources:
+  pipelines:
+    - pipeline: test-e2e
+      source: code-check
+      trigger: true
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: GoTool@0
+    inputs:
+        version: '1.13.5'
+  - script: |
+      curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
+      
+      export GO111MODULE=on
+      go get sigs.k8s.io/kind
+
+      make get-dependencies
+    displayName: Prepare e2e runtime
+  - script: |
+      make deploy-cluster
+      make deploy-base
+      make build
+      make cluster-load-image
+      make deploy-for-dpl
+    displayName: Prepare build 
+  - script: |
+      make test-e2e
+    displayName: Run e2e
+      
+
