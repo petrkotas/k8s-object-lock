@@ -12,10 +12,12 @@ steps:
 - task: GoTool@0
   inputs:
     version: '1.13.5'
+    goPath: '%Agent.BuildDirectory/go'
 - script: |
     make get-dependencies
   displayName: Download module dependencies
 - script: |
+    echo "gopath"
     echo $GOPATH
     make gen-code
     make build-code
