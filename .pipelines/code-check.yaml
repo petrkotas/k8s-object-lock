@@ -16,6 +16,7 @@ steps:
     make get-dependencies
   displayName: Download module dependencies
 - script: |
+    echo $GOPATH
     make gen-code
     make build-code
   displayName: Build project
