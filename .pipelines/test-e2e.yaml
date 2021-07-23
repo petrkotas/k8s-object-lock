@@ -1,5 +1,5 @@
-trigger: None
-pr: None
+trigger: none
+pr: none
 
 resources:
   pipelines:
@@ -14,6 +14,7 @@ steps:
 - task: GoTool@0
   inputs:
       version: '1.13.5'
+      goPath: '/home/vsts/work/go'
 - script: |
     curl -LO https://storage.googleapis.com/kubernetes-release/release/$(curl -s https://storage.googleapis.com/kubernetes-release/release/stable.txt)/bin/linux/amd64/kubectl && chmod +x kubectl && sudo mv kubectl /usr/local/bin/
     
