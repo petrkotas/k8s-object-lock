@@ -12,7 +12,7 @@ steps:
 - task: GoTool@0
   inputs:
     version: '1.13.5'
-    goPath: '%Agent.BuildDirectory/go'
+    goPath: '/home/vsts/work/go'
 - script: |
     make get-dependencies
   displayName: Download module dependencies
