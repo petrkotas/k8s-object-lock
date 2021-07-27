@@ -2,6 +2,8 @@ trigger:
   branches:
     include:
       - master
+      - refs/tags/*
+
 pr:
   - master
 
