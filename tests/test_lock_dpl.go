@@ -104,7 +104,7 @@ var _ = Describe("with kubernetes lock", func() {
 				namespace, err := kubeCli.CoreV1().Namespaces().Patch(ctx, "default", types.MergePatchType, []byte(
 					`{"metadata":{"labels":{"lockable":"true"}}}`), metav1.PatchOptions{})
 				Expect(err).ToNot(HaveOccurred(), "should patch namespace")
-				Expect(namespace.GetObjectMeta().GetLabels()).To(Equal(map[string]string{"lockable": "true"}), "no labels should be on the namespace")
+				Expect(namespace.GetObjectMeta().GetLabels()).To(Equal(map[string]string{"kubernetes.io/metadata.name": "default", "lockable": "true"}), "no labels should be on the namespace")
 			})
 
 			It("should block creation", func() {
@@ -158,7 +158,7 @@ var _ = Describe("with kubernetes lock", func() {
 				namespace, err := kubeCli.CoreV1().Namespaces().Patch(ctx, "default", types.MergePatchType, []byte(
 					`{"metadata":{"labels":{"lockable":"false"}}}`), metav1.PatchOptions{})
 				Expect(err).ToNot(HaveOccurred(), "should patch namespace")
-				Expect(namespace.GetObjectMeta().GetLabels()).To(Equal(map[string]string{"lockable": "false"}), "no labels should be on the namespace")
+				Expect(namespace.GetObjectMeta().GetLabels()).To(Equal(map[string]string{"kubernetes.io/metadata.name": "default", "lockable": "false"}), "no labels should be on the namespace")
 			})
 
 			It("should not affect deletion", func() {
