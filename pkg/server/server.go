@@ -118,6 +118,7 @@ func checkLock(lock *v1.Lock, admissionReview *v1beta1.AdmissionReview) bool {
 // Validate process the request, parse the data from it and pass to check
 func (s *Conf) Validate(w http.ResponseWriter, r *http.Request) {
 	klog.Info("Validating request")
+	ctx := r.Context()
 
 	// parse incoming request => admission request
 	var body []byte
@@ -167,7 +168,7 @@ func (s *Conf) Validate(w http.ResponseWriter, r *http.Request) {
 		klog.Infof("Admission request: %s, %s, %s", ar.Request.Resource, ar.Request.SubResource, ar.Request.Operation)
 
 		var lock *v1.Lock
-		lock, err = s.Client.LocksV1().Locks(ar.Request.Namespace).Get(ar.Request.Name, metav1.GetOptions{})
+		lock, err = s.Client.LocksV1().Locks(ar.Request.Namespace).Get(ctx, ar.Request.Name, metav1.GetOptions{})
 		if errors.IsNotFound(err) {
 			klog.Infof("Lock: %s/%s not found", ar.Request.Namespace, ar.Request.Name)
 			lock = nil
