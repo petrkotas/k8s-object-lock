@@ -25,7 +25,10 @@ steps:
 - script: |
     make deploy-cluster
     make deploy-base
-    make build
+    make gen-code
+    make build-code
+    make gen-cert
+    make build-docker
     make cluster-load-image
     make deploy-for-dpl
   displayName: Prepare build 

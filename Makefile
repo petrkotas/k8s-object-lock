@@ -64,7 +64,7 @@ clean-bin:
 	rm ./lockvalidation
 
 test-e2e:
-	go test -tag e2e ./tests
+	go test ./tests -tags e2e
 
 test-unit:
 	go test ./...
