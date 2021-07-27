@@ -23,8 +23,8 @@ steps:
     make get-dependencies
   displayName: Prepare e2e runtime
 - script: |
-    make gen-cert
     make deploy-cluster
+    make gen-cert
     make deploy-base
     make gen-code
     make build-code
