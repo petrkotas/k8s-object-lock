@@ -28,9 +28,12 @@ jobs:
       docker login -u pkotas --password-stdin <<< $SECRET 
       make gen-code
       make build-code
+      
+    displayName: Compile the code
+  - script: |
       docker build -t pkotas/k8s-object-lock:"$TAG" -f ./container/app.Dockerfile .
       docker push pkotas/k8s-object-lock:"$TAG"
-    displayName: Compile the code using makefile
+    displayName: Build and push container
   - script: |
       set -xe
       MESSAGE="$(git for-each-ref refs/tags/$TAG --format='%(contents)')"
