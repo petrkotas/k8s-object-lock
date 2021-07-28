@@ -4,8 +4,6 @@ pr: none
 pool:
   vmImage: 'ubuntu-latest'
 
-variables:
-  TAG: "tag-name"
 
 steps:
   - script: |
