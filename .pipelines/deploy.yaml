@@ -25,7 +25,7 @@ jobs:
       export GOPATH=$(go env GOPATH)
       export TAG=$(git describe)
       SECRET=$(DOCKER-CLI)
-      docker login -u pkotas $SECRET 
+      docker login -u pkotas --password-stdin <<< $SECRET 
       make gen-code
       make build-code
       docker build -t pkotas/k8s-object-lock:"$TAG" -f ./container/app.Dockerfile .
