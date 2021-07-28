@@ -1,50 +1,18 @@
 trigger: none
 pr: none
 
-resources:
-  pipelines:
-  - pipeline: buildContainer
-    source: petrkotas.k8s-object-lock.e2e
-    trigger: true
-
 pool:
   vmImage: 'ubuntu-latest'
 
-jobs:
-- job: onlyTagged
-  condition: startsWith(variables['build.sourceBranch'], 'refs/tags/v')
-  displayName: Build container
-  steps: 
-  - task: GoTool@0
-    inputs:
-      version: '1.13.5'
+variables:
+  TAG: "tag-name"
+
+steps:
   - script: |
-      make get-dependencies
-    displayName: Download module dependencies
-  - script: |
-      export GOPATH=$(go env GOPATH)
-      export TAG=$(git describe)
       SECRET=$(DOCKER-CLI)
       docker login -u pkotas --password-stdin <<< $SECRET 
-      make gen-code
-      make build-code
-      
-    displayName: Compile the code
+    displayName: Docker login
   - script: |
-      docker build -t pkotas/k8s-object-lock:"$TAG" -f ./container/app.Dockerfile .
-      docker push pkotas/k8s-object-lock:"$TAG"
-    displayName: Build and push container
-  - script: |
-      set -xe
-      MESSAGE="$(git for-each-ref refs/tags/$TAG --format='%(contents)')"
-      echo "$MESSAGE" > $(System.DefaultWorkingDirectory)/release.txt
-    displayName: Extract release notes from tag annotation
-  - task: GithubRelease@0
-    displayName: Publish release notes
-    inputs:
-      githubConnection: k8s-object-lock
-      repositoryName: petrkotas/k8s-object-lock
-      action: create
-      releaseNotesFile: $(System.DefaultWorkingDirectory)/release.txt
-      addChangeLog: true
+      docker pull pkotas/k8s-object-lock:"$TAG"
+    displayName: Pull image
 
