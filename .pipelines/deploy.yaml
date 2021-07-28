@@ -40,7 +40,7 @@ jobs:
     displayName: Publish release notes
     inputs:
       githubConnection: k8s-object-lock
-      repositoryName: petrkotas/k8s-object-lock-ado-release
+      repositoryName: petrkotas/k8s-object-lock
       action: create
       releaseNotesFile: $(System.DefaultWorkingDirectory)/release.txt
       addChangeLog: true
