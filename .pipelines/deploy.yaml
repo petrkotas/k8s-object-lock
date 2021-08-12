@@ -4,8 +4,19 @@ pr: none
 pool:
   vmImage: 'ubuntu-latest'
 
+resources:
+  repositories:
+    - repository: k8s-config
+      type: git
+      endpoint: petr
+      name: k8s-config/k8s-config
 
 steps:
+  - checkout: self
+  - checkout: k8s-config
+  - script: |
+      cd $(Agent.BuildDirectory)/s/k8s-config
+      less config.yaml
   - script: |
       SECRET=$(DOCKER-CLI)
       docker login -u pkotas --password-stdin <<< $SECRET 
