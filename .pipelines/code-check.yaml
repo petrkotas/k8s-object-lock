@@ -2,7 +2,9 @@ trigger:
   branches:
     include:
       - master
-      - refs/tags/*
+  tags:
+    include:
+      - v2021*
 
 pr:
   - master
