@@ -23,7 +23,8 @@ jobs:
     displayName: Download module dependencies
   - script: |
       export GOPATH=$(go env GOPATH)
-      export TAG=$(git describe)
+      export TAG=$(git describe --exact-match)
+      echo "$TAG"
       SECRET=$(DOCKER-CLI)
       docker login -u pkotas --password-stdin <<< $SECRET 
       make gen-code
