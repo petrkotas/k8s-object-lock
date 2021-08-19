@@ -17,11 +17,14 @@ steps:
   - script: |
       cd $(Agent.BuildDirectory)/s/k8s-config
       less config.yaml
+      export VAR="test"
+      echo "##vso[task.setvariable variable=VAR]$VAR"
   - script: |
       SECRET=$(DOCKER-CLI)
       docker login -u pkotas --password-stdin <<< $SECRET 
     displayName: Docker login
   - script: |
+      echo "$VAR"
       docker pull pkotas/k8s-object-lock:"$TAG"
       CONTAINER=$(docker create pkotas/k8s-object-lock:"$TAG")
       docker cp $CONTAINER:/usr/app/lockvalidation lockvalidation
