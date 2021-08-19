@@ -23,5 +23,8 @@ steps:
     displayName: Docker login
   - script: |
       docker pull pkotas/k8s-object-lock:"$TAG"
+      CONTAINER=$(docker create pkotas/k8s-object-lock:"$TAG")
+      docker cp $CONTAINER:/usr/app/lockvalidation lockvalidation
+      stat lockvalidation
     displayName: Pull image
 
