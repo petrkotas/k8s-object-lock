@@ -9,10 +9,6 @@ schedules:
     include:
     - master
 
-variables:
-- name: secret
-  value: ""
-
 pool:
   vmImage: 'ubuntu-latest'
 
