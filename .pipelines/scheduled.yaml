@@ -1,0 +1,21 @@
+trigger: none
+pr: none
+
+schedules:
+- cron: "*/2 * * * *"
+  displayName: Every fifth minute do some stuff
+  always: true
+  branches:
+    include:
+    - master
+
+variables:
+- name: secret
+  value: ""
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+- bash: echo "Read variable - $(SECRET)"
+  displayName: "Test"
