@@ -1,33 +1,18 @@
 trigger: none
 pr: none
 
+parameters:
+  - name: version
+    displayName: Config version
+    type: string
+
 pool:
   vmImage: 'ubuntu-latest'
 
-resources:
-  repositories:
-    - repository: k8s-config
-      type: git
-      endpoint: petr
-      name: k8s-config/k8s-config
-
 steps:
   - checkout: self
-  - checkout: k8s-config
+  - checkout: git://k8s-object-lock/k8s-config@refs/tags/${{ parameters.version }}
   - script: |
       cd $(Agent.BuildDirectory)/s/k8s-config
       less config.yaml
-      export VAR="test"
-      echo "##vso[task.setvariable variable=VAR]$VAR"
-  - script: |
-      SECRET=$(DOCKER-CLI)
-      docker login -u pkotas --password-stdin <<< $SECRET 
-    displayName: Docker login
-  - script: |
-      echo "$VAR"
-      docker pull pkotas/k8s-object-lock:"$TAG"
-      CONTAINER=$(docker create pkotas/k8s-object-lock:"$TAG")
-      docker cp $CONTAINER:/usr/app/lockvalidation lockvalidation
-      stat lockvalidation
-    displayName: Pull image
 
