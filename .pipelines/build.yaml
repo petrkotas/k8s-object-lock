@@ -23,8 +23,6 @@ jobs:
     displayName: Download module dependencies
   - script: |
       export GOPATH=$(go env GOPATH)
-      export TAG=$(git describe --exact-match)
-      echo "$TAG"
       SECRET=$(DOCKER-CLI)
       docker login -u pkotas --password-stdin <<< $SECRET 
       make gen-code
@@ -32,6 +30,8 @@ jobs:
       
     displayName: Compile the code
   - script: |
+      export TAG=$(git describe --exact-match)
+      echo "$TAG"
       docker build -t pkotas/k8s-object-lock:"$TAG" -f ./container/app.Dockerfile .
       docker push pkotas/k8s-object-lock:"$TAG"
     displayName: Build and push container
