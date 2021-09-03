@@ -12,7 +12,8 @@ pool:
 steps:
   - checkout: self
   - script: |
-      echo "and we end"; exit 1
+      echo "and we end"
+      exit 1
   - checkout: git://k8s-object-lock/k8s-config@refs/tags/${{ parameters.version }}
   - script: |
       cd $(Agent.BuildDirectory)/s/k8s-config
