@@ -11,8 +11,17 @@ pool:
 
 steps:
   - checkout: self
+  - script: |
+      echo "and we end"; exit 1
   - checkout: git://k8s-object-lock/k8s-config@refs/tags/${{ parameters.version }}
   - script: |
       cd $(Agent.BuildDirectory)/s/k8s-config
       less config.yaml
+  - script: |
+      SECRET=$(DOCKER-CLI)
+      docker login -u pkotas --password-stdin <<< $SECRET 
+    displayName: Docker login
+  - script: |
+      docker pull pkotas/k8s-object-lock:"$TAG"
+    displayName: Pull image
 
