@@ -15,6 +15,9 @@ steps:
       echo "and we end"
       exit 1
   - checkout: git://k8s-object-lock/k8s-config@refs/tags/${{ parameters.version }}
+    condition: ne('${{parameters.version}}', '')
+  - checkout: git://k8s-object-lock/k8s-config@refs/heads/master
+    condition: eq('${{parameters.version}}', '')
   - script: |
       cd $(Agent.BuildDirectory)/s/k8s-config
       less config.yaml
