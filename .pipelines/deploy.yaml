@@ -5,6 +5,7 @@ parameters:
   - name: version
     displayName: Config version
     type: string
+    default: ''
 
 pool:
   vmImage: 'ubuntu-latest'
