@@ -12,9 +12,6 @@ pool:
 
 steps:
   - checkout: self
-  - script: |
-      echo "and we end"
-      exit 1
   - ${{ if ne(parameters.version, 'latest') }}:
     - checkout: git://k8s-object-lock/k8s-config@refs/tags/${{ parameters.version }}
   - ${{ if eq(parameters.version, 'latest') }}:    
